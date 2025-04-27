@@ -6,8 +6,11 @@ package mephi.b22901.lab3;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.xml.stream.*;
 import javax.xml.stream.events.EndElement;
 import javax.xml.stream.events.StartElement;
@@ -80,10 +83,7 @@ public class XmlHandler extends BaseHandler {
                     } else if (startEl.getName().getLocalPart().equals("efficiency")) {
                         event = reader.nextEvent();
                         creature.setEfficiency(event.asCharacters().getData());
-                    } else if (startEl.getName().getLocalPart().equals("efficiency")) {
-                        event = reader.nextEvent();
-                        creature.setEfficiency(event.asCharacters().getData());
-                    }
+                    }                    
                 }
                 if (event.isEndElement()) {
                     EndElement endEl = event.asEndElement();
@@ -98,10 +98,83 @@ public class XmlHandler extends BaseHandler {
         return creatures;
     }
 
-    @Override
-    protected void writeData(String path, List<Creature> creatures
-    ) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+     @Override
+    protected void writeData(String path) {
+        XMLOutputFactory output = XMLOutputFactory.newInstance();
+        //List <Creature> cre
+        try{
+            XMLStreamWriter writer = output.createXMLStreamWriter(new FileOutputStream(path), "UTF-8");
+            writer.writeStartDocument("1.0");
+            writer.writeStartElement("creatures");
+            for (Creature creature : Storage.xmlStorage){
+                writer.writeStartElement("creature");
+                
+                writer.writeStartElement("id");
+                writer.writeCharacters(Integer.toString(creature.getId()));
+                writer.writeEndElement();
+                
+                writer.writeStartElement("name");
+                writer.writeCharacters(creature.getName());
+                writer.writeEndElement();
+                
+                writer.writeStartElement("description");
+                writer.writeCharacters(creature.getDescription());
+                writer.writeEndElement();
+                
+                writer.writeStartElement("dangerLevel");
+                writer.writeCharacters(Integer.toString(creature.getDangerLevel()));
+                writer.writeEndElement();
+                
+                writer.writeStartElement("habitat");
+                writer.writeCharacters(creature.getHabitat());
+                writer.writeEndElement();
+                
+                writer.writeStartElement("activity");
+                writer.writeCharacters(creature.getActivity());
+                writer.writeEndElement();
+                
+                writer.writeStartElement("firstMentioned");
+                writer.writeCharacters(creature.getFirstMentioned());
+                writer.writeEndElement();
+                
+                writer.writeStartElement("immunities");
+                writer.writeCharacters(creature.getImmunities());
+                writer.writeEndElement();
+                
+                writer.writeStartElement("vulnerabilities");
+                writer.writeCharacters(creature.getVulnerabilities());
+                writer.writeEndElement();
+                
+                writer.writeStartElement("height");
+                writer.writeCharacters(creature.getHeight());
+                writer.writeEndElement();
+                
+                writer.writeStartElement("weight");
+                writer.writeCharacters(creature.getWeight());
+                writer.writeEndElement();
+                
+                writer.writeStartElement("poisonRecipe");
+                writer.writeCharacters(creature.getPoisonRecipe());
+                writer.writeEndElement();
+                
+                writer.writeStartElement("time");
+                writer.writeCharacters(Integer.toString(creature.getTime()));
+                writer.writeEndElement();
+                
+                writer.writeStartElement("efficiency");
+                writer.writeCharacters(creature.getEfficiency());
+                writer.writeEndElement();
+                
+                
+                
+                writer.writeEndElement();              
+            }
+            writer.writeEndElement();
+            writer.writeEndDocument();
+            writer.flush();
+        } catch (FileNotFoundException | XMLStreamException ex) {
+            Logger.getLogger(XmlHandler.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 
 }

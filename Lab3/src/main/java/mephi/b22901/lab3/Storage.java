@@ -29,5 +29,27 @@ public class Storage {
                 break;
         }
     }
+    
+    public static boolean isEmpty(String storage){
+        boolean check = true;
+        switch (storage) {
+            case ".xml":
+                if (xmlStorage != null){
+                    check = false;
+                }
+                break;
+            case ".json":
+                if (jsonStorage != null){
+                    check = false;
+                }
+                break;
+            case ".yaml":
+                if (yamlStorage != null){
+                    check = false;
+                }
+                break;
+        }
+        return check;
+    }
 
 }

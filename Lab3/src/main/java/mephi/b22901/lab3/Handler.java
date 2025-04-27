@@ -14,6 +14,6 @@ public interface Handler {
 
     public Handler setNext(Handler h);
     public List<Creature> doImport(String path);
-    public void doExport(String path, List<Creature> bestiarium);
+    public void doExport(String path);
 
 }

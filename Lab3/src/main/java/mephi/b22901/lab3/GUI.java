@@ -11,7 +11,6 @@ import java.awt.GridBagLayout;
 import java.awt.GridLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.File;
@@ -78,8 +77,16 @@ public class GUI extends JFrame {
 
         JButton exportBtn = new JButton("Экспортировать");
         exportBtn.addActionListener((e) -> {
-            String path = getPathForExport();          
-            System.out.println(path);
+            String path = getPathForExport();
+            int dotIndex = path.lastIndexOf('.');
+            String type = (dotIndex == -1) ? "" : path.substring(dotIndex);
+            if(!Storage.isEmpty(type)){
+                System.out.println(path);
+                controller.exportData(path);
+            }else {
+                JOptionPane.showMessageDialog(null, "Хранилище этого формата пустое, сначала импортируйте данные!", null, JOptionPane.WARNING_MESSAGE);
+            }
+            
         });
         JPanel btnPanel = new JPanel();
         btnPanel.setLayout(new BoxLayout(btnPanel, BoxLayout.X_AXIS));
@@ -106,7 +113,7 @@ public class GUI extends JFrame {
         return path;
     }
 
-    public String getPathForExport() {
+    private String getPathForExport() {
         JFileChooser fileChooser = new JFileChooser(dir);
         fileChooser.setFileFilter(filter);
         int ret = fileChooser.showSaveDialog(null);
@@ -114,7 +121,7 @@ public class GUI extends JFrame {
         if (ret == JFileChooser.APPROVE_OPTION) {
             path = fileChooser.getSelectedFile().getAbsolutePath();
             String[] formats = {".xml", ".json", ".yaml"};
-            if (!path.endsWith(formats[2]) || path.endsWith(formats[0]) || path.endsWith(formats[1])) {
+            if (!path.endsWith(formats[2]) & !path.endsWith(formats[0]) & !path.endsWith(formats[1])) {
                 int selected = JOptionPane.showOptionDialog(null, "Choose file format", "Выбор расширения", 0, JOptionPane.QUESTION_MESSAGE, null, formats, null);
                 path += formats[selected];
             }

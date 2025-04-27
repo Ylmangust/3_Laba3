@@ -28,8 +28,7 @@ public class JsonHandler extends BaseHandler {
         List<Creature> creatures = null;
         File file = new File(path);
         try {
-            creatures = mapper.readValue(file, new TypeReference<List<Creature>>() {
-            });
+            creatures = mapper.readValue(file, new TypeReference<List<Creature>>() {});
             for (Creature creature : creatures) {
                 if (creature.getRecievedFrom() == null) {
                     creature.setRecievedFrom(extension); 
@@ -42,8 +41,13 @@ public class JsonHandler extends BaseHandler {
     }
 
     @Override
-    protected void writeData(String path, List<Creature> creatures) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    protected void writeData(String path) {
+        ObjectMapper mapper = new ObjectMapper();
+        try {
+            mapper.writeValue(new File(path), Storage.jsonStorage);
+        } catch (IOException ex) {
+            Logger.getLogger(JsonHandler.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 
 }

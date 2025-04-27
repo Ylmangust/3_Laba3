@@ -4,26 +4,30 @@
  */
 package mephi.b22901.lab3;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 /**
  *
  * @author Регина
  */
 public class Creature {
-        private int id;
-        private String name;
-        private String description;
-        private int dangerLevel;
-        private String habitat;
-        private String activity;
-        private String firstMentioned;
-        private String immunities;
-        private String vulnerabilities;
-        private String height;
-        private String weight;
-        private String poisonRecipe;
-        private int time;
-        private String efficiency;
-        private String recievedFrom;
+
+    private int id;
+    private String name;
+    private String description;
+    private int dangerLevel;
+    private String habitat;
+    private String activity;
+    private String firstMentioned;
+    private String immunities;
+    private String vulnerabilities;
+    private String height;
+    private String weight;
+    private String poisonRecipe;
+    private int time;
+    private String efficiency;
+    @JsonIgnore
+    private String recievedFrom;
 
     public int getId() {
         return id;
@@ -144,13 +148,10 @@ public class Creature {
     public void setRecievedFrom(String recievedFrom) {
         this.recievedFrom = recievedFrom;
     }
-    
+
     @Override
-    public String toString(){
+    public String toString() {
         return name;
     }
-    
-     
-    
-        
+
 }

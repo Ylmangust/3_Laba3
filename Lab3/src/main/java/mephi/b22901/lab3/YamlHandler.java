@@ -4,10 +4,13 @@
  */
 package mephi.b22901.lab3;
 
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import java.io.*;
 import java.util.*;
-import java.util.logging.*;
-import org.yaml.snakeyaml.Yaml;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -21,8 +24,20 @@ public class YamlHandler extends BaseHandler {
 
     @Override
     protected List<Creature> readData(String path) {
-        List<Creature> bestiarium = new ArrayList<>();
-        InputStream inputStream;
+        List<Creature> creatures = null;
+        ObjectMapper mapper = new ObjectMapper(new YAMLFactory());
+        File file = new File(path);
+        try {
+            creatures = mapper.readValue(file, mapper.getTypeFactory().constructCollectionType(List.class, Creature.class));
+            for (Creature creature : creatures) {
+                if (creature.getRecievedFrom() == null) {
+                    creature.setRecievedFrom(extension);
+                }
+            }
+        } catch (IOException e) {
+            Logger.getLogger(YamlHandler.class.getName()).log(Level.SEVERE, null, e);
+        }
+        /* InputStream inputStream;
         try {
             inputStream = new FileInputStream(new File(path));
             Yaml yaml = new Yaml();
@@ -48,13 +63,18 @@ public class YamlHandler extends BaseHandler {
             }
         } catch (FileNotFoundException ex) {
             Logger.getLogger(YamlHandler.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        return bestiarium;
+        }*/
+        return creatures;
     }
 
     @Override
-    protected void writeData(String path, List<Creature> creatures) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    protected void writeData(String path) {
+        ObjectMapper mapper = new ObjectMapper(new YAMLFactory());
+        try {
+            mapper.writeValue(new File(path), Storage.yamlStorage);
+        } catch (IOException ex) {
+            Logger.getLogger(YamlHandler.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 
 }

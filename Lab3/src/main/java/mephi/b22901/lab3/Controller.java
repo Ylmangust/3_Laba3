@@ -13,11 +13,10 @@ import java.util.List;
  */
 public class Controller {
 
-    private GUI gui;
-    private XmlHandler xml;
-    private JsonHandler json;
-    private YamlHandler yaml;
-    private Storage storage;
+    private final GUI gui;
+    private final XmlHandler xml;
+    private final JsonHandler json;
+    private final YamlHandler yaml;
 
     public Controller() throws URISyntaxException {
         this.gui = new GUI(this);
@@ -29,6 +28,10 @@ public class Controller {
 
     public List<Creature> importData(String path) {
         return (xml.doImport(path));
+    }
+    
+    public void exportData(String path){
+        xml.doExport(path);
     }
 
 }

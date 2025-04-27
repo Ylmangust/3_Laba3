@@ -36,15 +36,15 @@ public abstract class BaseHandler implements Handler{
         return bestiarium;
     }
     
-    public void doExport(String path, List<Creature> bestiarium){
+    public void doExport(String path){
         if (path.endsWith(extension)){
-          writeData(path, bestiarium);
+          writeData(path);
         }
         else {
-            next.doExport(path, bestiarium);
+            next.doExport(path);
         }
     }
     
     protected abstract List<Creature> readData(String path);
-    protected abstract void writeData(String path, List <Creature> creatures);
+    protected abstract void writeData(String path);
 }
