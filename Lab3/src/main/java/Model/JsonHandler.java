@@ -2,15 +2,13 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
-package mephi.b22901.lab3;
+package Model;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import java.util.logging.*;
 
 /**
  *
@@ -44,7 +42,7 @@ public class JsonHandler extends BaseHandler {
     protected void writeData(String path) {
         ObjectMapper mapper = new ObjectMapper();
         try {
-            mapper.writeValue(new File(path), Storage.jsonStorage);
+            mapper.writeValue(new File(path), Storage.getJsonStorage());
         } catch (IOException ex) {
             Logger.getLogger(JsonHandler.class.getName()).log(Level.SEVERE, null, ex);
         }

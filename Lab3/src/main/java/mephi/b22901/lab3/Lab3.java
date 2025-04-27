@@ -3,6 +3,7 @@
  */
 package mephi.b22901.lab3;
 
+import Controller.Controller;
 import java.net.URISyntaxException;
 
 /**

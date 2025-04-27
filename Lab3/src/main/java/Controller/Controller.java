@@ -2,10 +2,16 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
-package mephi.b22901.lab3;
+package Controller;
 
+import Model.YamlHandler;
+import Model.XmlHandler;
+import Model.Creature;
+import Model.JsonHandler;
+import Model.Storage;
 import java.net.URISyntaxException;
 import java.util.List;
+import View.GUI;
 
 /**
  *
@@ -33,5 +39,8 @@ public class Controller {
     public void exportData(String path){
         xml.doExport(path);
     }
-
+    
+    public void saveToStorage(int creatureId, String vulnerabilities, int dangerLvl, String ex){
+        Storage.editData(creatureId, vulnerabilities, dangerLvl, ex);
+    }
 }

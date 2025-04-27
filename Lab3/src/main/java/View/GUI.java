@@ -2,10 +2,16 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
-package mephi.b22901.lab3;
+package View;
 
+import Controller.Controller;
+import Model.Storage;
+import Model.Creature;
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Font;
+import java.awt.FontFormatException;
+import java.awt.GraphicsEnvironment;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.GridLayout;
@@ -14,12 +20,20 @@ import java.awt.event.ActionEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
 import java.net.URISyntaxException;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.*;
+import javax.swing.border.Border;
+import javax.swing.border.CompoundBorder;
+import javax.swing.border.EmptyBorder;
 import javax.swing.border.LineBorder;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.tree.*;
+import mephi.b22901.lab3.Lab3;
 
 /**
  *
@@ -34,6 +48,57 @@ public class GUI extends JFrame {
     private final JScrollPane scrollP;
 
     public GUI(Controller controller) throws URISyntaxException {
+
+        try {
+            InputStream fontStream = getClass().getResourceAsStream("/chronicles.ttf");
+            if (fontStream == null) {
+                throw new IOException("Font not found in resources");
+            }
+            Font customFont = Font.createFont(Font.TRUETYPE_FONT, fontStream).deriveFont(Font.BOLD, 16f);
+            GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
+            ge.registerFont(customFont);
+            UIManager.setLookAndFeel("com.sun.java.swing.plaf.motif.MotifLookAndFeel");
+            UIManager.put("Label.font", customFont);
+            UIManager.put("Button.font", customFont);
+            UIManager.put("TextField.font", customFont);
+            UIManager.put("TextArea.font", customFont);
+            UIManager.put("ComboBox.font", customFont);
+            UIManager.put("FileChooser.listFont", customFont);
+            UIManager.put("Panel.background", new Color(3, 3, 47));
+            UIManager.put("Button.background", new Color(3, 3, 47));
+            UIManager.put("ScrollPane.background", new Color(3, 3, 47));
+
+            UIManager.put("FileChooser.listBackground", new Color(213, 215, 221)); // цвет фона списка
+            UIManager.put("FileChooser.listForeground", Color.BLACK);
+
+            UIManager.put("TextField.background", new Color(213, 215, 221));
+            UIManager.put("TextField.foreground", Color.BLACK);
+
+            UIManager.put("ComboBox.background", new Color(213, 215, 221));
+            UIManager.put("ComboBox.foreground", Color.BLACK);
+
+            UIManager.put("TextArea.background", new Color(213, 215, 221));
+            UIManager.put("TextArea.foreground", Color.BLACK);
+
+            UIManager.put("Tree.background", new Color(213, 215, 221));
+            UIManager.put("Tree.foreground", Color.BLACK);
+
+            UIManager.put("OptionPane.background", new Color(3, 3, 47));
+            UIManager.put("OptionPane.messageForeground", new Color(243, 219, 88));
+
+            Border coloredBorder = new LineBorder(new Color(243, 219, 88), 1);
+            Border margin = new EmptyBorder(5, 5, 5, 5);
+            Border compoundBorder = new CompoundBorder(coloredBorder, margin);
+            UIManager.put("Button.foreground", Color.WHITE);
+            UIManager.put("Button.border", compoundBorder);
+
+            UIManager.put("Label.foreground", new Color(243, 219, 88));
+
+        } catch (ClassNotFoundException | InstantiationException | IllegalAccessException | UnsupportedLookAndFeelException ex) {
+            Logger.getLogger(GUI.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (IOException | FontFormatException ex) {
+            Logger.getLogger(GUI.class.getName()).log(Level.SEVERE, null, ex);
+        }
         this.controller = controller;
         this.dir = new File(Lab3.class.getProtectionDomain().getCodeSource().getLocation().toURI()).getParent();
 
@@ -52,12 +117,17 @@ public class GUI extends JFrame {
                     TreePath path = ((JTree) e.getSource()).getSelectionPath();
                     DefaultMutableTreeNode node = (DefaultMutableTreeNode) path.getLastPathComponent();
                     if (node.isLeaf() && node.getLevel() == 1) {
-                        Creature selected = (Creature) node.getUserObject();
-                        InfoWindow(selected);
+                        InfoWindow(node);
                     }
                 }
             }
         });
+
+        DefaultTreeCellRenderer renderer = new DefaultTreeCellRenderer();
+        renderer.setBackgroundNonSelectionColor(new Color(213, 215, 221));
+        renderer.setBackgroundSelectionColor(Color.GRAY);
+        renderer.setTextSelectionColor(Color.WHITE);
+        creatureTree.setCellRenderer(renderer);
 
         scrollP = new JScrollPane(creatureTree);
         scrollP.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
@@ -78,15 +148,16 @@ public class GUI extends JFrame {
         JButton exportBtn = new JButton("Экспортировать");
         exportBtn.addActionListener((e) -> {
             String path = getPathForExport();
-            int dotIndex = path.lastIndexOf('.');
-            String type = (dotIndex == -1) ? "" : path.substring(dotIndex);
-            if(!Storage.isEmpty(type)){
-                System.out.println(path);
-                controller.exportData(path);
-            }else {
-                JOptionPane.showMessageDialog(null, "Хранилище этого формата пустое, сначала импортируйте данные!", null, JOptionPane.WARNING_MESSAGE);
+            if (path != null) {
+                int dotIndex = path.lastIndexOf('.');
+                String type = (dotIndex == -1) ? "" : path.substring(dotIndex);
+                if (!Storage.isEmpty(type)) {
+                    controller.exportData(path);
+                } else {
+                    JOptionPane.showMessageDialog(null, "Хранилище этого формата пустое, сначала импортируйте данные!", null, JOptionPane.WARNING_MESSAGE);
+                }
             }
-            
+
         });
         JPanel btnPanel = new JPanel();
         btnPanel.setLayout(new BoxLayout(btnPanel, BoxLayout.X_AXIS));
@@ -131,9 +202,11 @@ public class GUI extends JFrame {
         return path;
     }
 
-    private void InfoWindow(Creature creature) {
+    private void InfoWindow(DefaultMutableTreeNode node) {
+        Creature creature = (Creature) node.getUserObject();
+
         JFrame frame = new JFrame("Информация о существе");
-        frame.setSize(780, 500);
+        frame.setSize(1000, 550);
 
         JPanel panel = new JPanel();
         panel.setLayout(new GridBagLayout());
@@ -176,7 +249,8 @@ public class GUI extends JFrame {
         JButton editButton = new JButton("Редактировать данные");
         btnPanel.add(editButton);
         editButton.addActionListener((e) -> {
-            editWindow();
+            editWindow(node);
+            frame.dispose();
         });
         frame.add(btnPanel, BorderLayout.SOUTH);
 
@@ -184,22 +258,25 @@ public class GUI extends JFrame {
         frame.setLocationRelativeTo(null);
     }
 
-    private void editWindow() {
+    private void editWindow(DefaultMutableTreeNode node) {
+        Creature creature = (Creature) node.getUserObject();
+
         JFrame frame = new JFrame("Изменение данных о существе");
-        frame.setSize(500, 250);
+        frame.setSize(600, 300);
 
         JPanel panel = new JPanel();
         panel.setLayout(new GridLayout(2, 0));
 
         JPanel panel1 = new JPanel();
-        String[] dangerOptions = {"0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10"};
+        Integer[] dangerOptions = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
         JComboBox danger = new JComboBox(dangerOptions);
+        danger.setSelectedIndex(creature.getDangerLevel());
         JLabel dangerLabel = new JLabel("Новое значение уровня опасности: ");
         panel1.add(dangerLabel);
         panel1.add(danger);
 
         JLabel vulnerabilityLabel = new JLabel("Новая информация об уязвимостях: ");
-        JTextArea vulnerabilityArea = new JTextArea(3, 15);
+        JTextArea vulnerabilityArea = new JTextArea(creature.getVulnerabilities(), 3, 15);
         JScrollPane scrollPane = new JScrollPane(vulnerabilityArea);
         vulnerabilityArea.setBorder(new LineBorder(Color.BLACK));
         JPanel panel2 = new JPanel();
@@ -212,6 +289,16 @@ public class GUI extends JFrame {
 
         JPanel btnPanel = new JPanel();
         JButton okBtn = new JButton("Сохранить");
+        okBtn.addActionListener((e) -> {
+            int selectedDangerLevel = (int) danger.getSelectedItem();
+            String newVulnerabilities = vulnerabilityArea.getText();
+            creature.setDangerLevel(selectedDangerLevel);
+            creature.setVulnerabilities(newVulnerabilities);
+            node.setUserObject(creature);
+            ((DefaultTreeModel) creatureTree.getModel()).nodeChanged(node);
+            controller.saveToStorage(creature.getId(), newVulnerabilities, selectedDangerLevel, creature.getRecievedFrom());
+            frame.dispose();
+        });
         btnPanel.add(okBtn);
         btnPanel.setBorder(BorderFactory.createEmptyBorder(5, 20, 10, 20));
 

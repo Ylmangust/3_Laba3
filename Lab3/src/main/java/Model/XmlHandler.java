@@ -2,19 +2,13 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
-package mephi.b22901.lab3;
+package Model;
 
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import java.io.*;
+import java.util.*;
+import java.util.logging.*;
 import javax.xml.stream.*;
-import javax.xml.stream.events.EndElement;
-import javax.xml.stream.events.StartElement;
-import javax.xml.stream.events.XMLEvent;
+import javax.xml.stream.events.*;
 
 /**
  *
@@ -106,7 +100,7 @@ public class XmlHandler extends BaseHandler {
             XMLStreamWriter writer = output.createXMLStreamWriter(new FileOutputStream(path), "UTF-8");
             writer.writeStartDocument("1.0");
             writer.writeStartElement("creatures");
-            for (Creature creature : Storage.xmlStorage){
+            for (Creature creature : Storage.getXmlStorage()){
                 writer.writeStartElement("creature");
                 
                 writer.writeStartElement("id");
