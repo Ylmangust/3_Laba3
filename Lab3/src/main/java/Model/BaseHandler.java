@@ -40,7 +40,7 @@ public abstract class BaseHandler implements Handler{
         if (path.endsWith(extension)){
           writeData(path);
         }
-        else {
+        else if (next != null){
             next.doExport(path);
         }
     }
